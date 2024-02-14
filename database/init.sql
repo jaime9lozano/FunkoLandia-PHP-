@@ -21,7 +21,7 @@ CREATE TABLE "public"."funkos" (
                                    "created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    "categoria_id" uuid,
-                                   CONSTRAINT "funkos_pkey" PRIMARY KEY ("id"),
+                                   CONSTRAINT "funkos_pkey" PRIMARY KEY ("id")
 );
 -- Inserción de Funkos en cada categoría
 INSERT INTO "funkos" ("nombre", "precio", "cantidad", "categoria_id", "created_at", "updated_at", "is_deleted")
