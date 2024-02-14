@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS "categorias";
 CREATE SEQUENCE funkos_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 5 CACHE 1;
 
 CREATE TABLE "public"."funkos" (
-                                   "id" bigint DEFAULT nextval('funkos_id_seq') NOT NULL,,
+                                   "id" bigint DEFAULT nextval('funkos_id_seq') NOT NULL,
                                    "nombre" character varying(255) NOT NULL,
                                    "precio" double precision DEFAULT 0.0 NOT NULL,
                                    "cantidad" integer DEFAULT 0 NOT NULL,
