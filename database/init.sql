@@ -17,7 +17,7 @@ CREATE TABLE "public"."funkos" (
                                    "precio" double precision DEFAULT 0.0 NOT NULL,
                                    "cantidad" integer DEFAULT 0 NOT NULL,
                                    "imagen" text DEFAULT 'https://via.placeholder.com/150' NOT NULL,
-                                   "is_deleted" boolean DEFAULT false NOT NULL,
+                                   "is_deleted" boolean DEFAULT false,
                                    "created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                    "categoria_id" uuid,

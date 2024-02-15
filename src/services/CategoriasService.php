@@ -3,6 +3,7 @@
 namespace services;
 
 use models\Categoria;
+use Ramsey\Uuid\Uuid;
 use PDO;
 
 require_once __DIR__ . '/../models/Categoria.php';
@@ -52,5 +53,52 @@ class CategoriasService
             $row['is_deleted']
         );
         return $categoria;
+    }
+    public function deleteById($id)
+    {
+        $sql = "DELETE FROM categorias WHERE id = :id"; // Consulta SQL para eliminar
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_STR); // Vincular el ID como un entero
+
+        return $stmt->execute(); // Ejecutar la consulta y devolver el resultado
+    }
+
+    public function update(Categoria $categoria)
+    {
+        $sql = "UPDATE categorias SET
+            nombre = :nombre,
+            updated_at = :updated_at
+            WHERE id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindValue(':nombre', $categoria->nombre, PDO::PARAM_STR);
+        $categoria->updatedAt = date('Y-m-d H:i:s');
+        $stmt->bindValue(':updated_at', $categoria->updatedAt, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $categoria->id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    public function save(Categoria $categoria)
+    {
+        $uuid = Uuid::uuid4()->toString();;
+
+        $sql = "INSERT INTO categorias (id, nombre, created_at, updated_at)
+            VALUES (:id, :nombre, :created_at, :updated_at)";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindValue(':id', $uuid, PDO::PARAM_STR);
+        $stmt->bindValue(':nombre', $categoria->nombre, PDO::PARAM_STR);
+
+        $categoria->createdAt = date('Y-m-d H:i:s');
+        $stmt->bindValue(':created_at', $categoria->createdAt, PDO::PARAM_STR);
+
+        $categoria->updatedAt = date('Y-m-d H:i:s');
+        $stmt->bindValue(':updated_at', $categoria->updatedAt, PDO::PARAM_STR);
+
+        return $stmt->execute();
     }
 }

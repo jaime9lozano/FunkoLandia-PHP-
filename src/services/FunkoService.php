@@ -95,7 +95,7 @@ class FunkoService
 
     public function deleteById($id)
     {
-        $sql = "DELETE FROM productos WHERE id = :id"; // Consulta SQL para eliminar
+        $sql = "DELETE FROM funkos WHERE id = :id"; // Consulta SQL para eliminar
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT); // Vincular el ID como un entero
@@ -130,7 +130,7 @@ class FunkoService
 
     public function save(Funko $funko)
     {
-        $sql = "INSERT INTO productos ( nombre, imagen, precio, cantidad, categoria_id, created_at, updated_at)
+        $sql = "INSERT INTO funkos ( nombre, imagen, precio, cantidad, categoria_id, created_at, updated_at)
             VALUES (:nombre, :imagen, :precio, :cantidad, :categoria_id, :created_at, :updated_at)";
 
         $stmt = $this->pdo->prepare($sql);
