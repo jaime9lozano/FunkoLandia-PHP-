@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (count($errores) === 0) {
         // Actualizamos el producto
         // Creamos el producto
-        $funko = new Producto();
+        $funko = new Funko();
         $funko->nombre = $nombre;
         $funko->precio = $precio;
         $funko->cantidad = $cantidad;
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="hidden" name="id" value="<?php echo $productoId; ?>">
 
         <div class="form-group">
-            <label for="marca">Nombre:</label>
+            <label for="nombre">Nombre:</label>
             <input class="form-control" id="nombre" name="nombre" type="text" required
                    value="<?php echo htmlspecialchars($funko->nombre); ?>">
             <?php if (isset($errores['nombre'])): ?>
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    value="<?php echo htmlspecialchars($funko->imagen); ?>">
         </div>
         <div class="form-group">
-            <label for="stock">Cantidad:</label>
+            <label for="cantidad">Cantidad:</label>
             <input class="form-control" id="cantidad" min="0" name="cantidad" type="number" required
                    value="<?php echo htmlspecialchars($funko->cantidad); ?>">
             <?php if (isset($errores['cantidad'])): ?>

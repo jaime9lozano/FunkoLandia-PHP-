@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="create.php" method="post">
         <div class="form-group">
-            <label for="nombre">Descripción:</label>
+            <label for="nombre">Nombre:</label>
             <input class="form-control" id="nombre" name="nombre" type="text" required>
             <?php if (isset($errores['nombre'])): ?>
                 <small class="text-danger"><?php echo $errores['nombre']; ?></small>

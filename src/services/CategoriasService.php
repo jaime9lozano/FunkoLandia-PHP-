@@ -56,7 +56,9 @@ class CategoriasService
     }
     public function deleteById($id)
     {
-        $sql = "DELETE FROM categorias WHERE id = :id"; // Consulta SQL para eliminar
+        $sql = "UPDATE categorias SET
+            is_deleted = true
+            WHERE id = :id"; // Consulta SQL para eliminar
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_STR); // Vincular el ID como un entero
@@ -76,7 +78,7 @@ class CategoriasService
         $stmt->bindValue(':nombre', $categoria->nombre, PDO::PARAM_STR);
         $categoria->updatedAt = date('Y-m-d H:i:s');
         $stmt->bindValue(':updated_at', $categoria->updatedAt, PDO::PARAM_STR);
-        $stmt->bindValue(':id', $categoria->id, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $categoria->id, PDO::PARAM_STR);
 
         return $stmt->execute();
     }
@@ -100,5 +102,60 @@ class CategoriasService
         $stmt->bindValue(':updated_at', $categoria->updatedAt, PDO::PARAM_STR);
 
         return $stmt->execute();
+    }
+    public function findAllWithName($searchTerm = null)
+    {
+        $sql = "SELECT c.*, null AS categoria_nombre
+        FROM categorias c";
+
+        if ($searchTerm) {
+            $searchTerm = '%' . strtolower($searchTerm) . '%';
+            $sql .= " WHERE LOWER(c.nombre) LIKE :searchTerm";
+        }
+
+        $sql .= " ORDER BY c.id ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        if ($searchTerm) {
+            $stmt->bindValue(':searchTerm', $searchTerm, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+
+        $categorias = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $categoria = new Categoria(
+                $row['id'],
+                $row['nombre'],
+                $row['created_at'],
+                $row['updated_at'],
+                $row['is_deleted']
+            );
+            $categorias[] = $categoria;
+        }
+        return $categorias;
+    }
+
+    public function findById($id)
+    {
+        $sql = "SELECT * FROM categorias WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return null;
+        }
+
+        $categoria = new Categoria(
+                $row['id'],
+                $row['nombre'],
+                $row['created_at'],
+                $row['updated_at'],
+                $row['is_deleted']
+        );
+        return $categoria;
     }
 }

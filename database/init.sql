@@ -1,6 +1,8 @@
 SELECT 'CREATE DATABASE nombre_de_la_base_de_datos'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tienda');
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 DROP TABLE IF EXISTS "funkos";
 DROP SEQUENCE IF EXISTS funkos_id_seq;
 DROP TABLE IF EXISTS "user_roles";
@@ -85,7 +87,7 @@ CREATE TABLE "public"."categorias"
     "is_deleted" boolean   DEFAULT false,
     "created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    "id"         uuid                                NOT NULL,
+    "id"         uuid      DEFAULT uuid_generate_v4() NOT NULL,
     "nombre"     character varying(255)              NOT NULL,
     CONSTRAINT "categorias_nombre_key" UNIQUE ("nombre"),
     CONSTRAINT "categorias_pkey" PRIMARY KEY ("id")

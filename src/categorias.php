@@ -1,7 +1,7 @@
 <?php
 
 use config\Config;
-use services\FunkoService;
+use services\CategoriasService;
 use services\SessionService;
 
 // Para cargar las clases automáticamente
@@ -10,12 +10,19 @@ require_once 'vendor/autoload.php';
 // Para las sesiones y configuración
 require_once __DIR__ . '/services/SessionService.php';
 require_once __DIR__ . '/config/Config.php';
-require_once __DIR__ . '/services/FunkoService.php';
-require_once __DIR__ . '/models/Funko.php';
+require_once __DIR__ . '/services/CategoriasService.php';
+require_once __DIR__ . '/models/Categoria.php';
 $session = $sessionService = SessionService::getInstance();
-
+// Solo se puede entrar si en la sesión el usuario es User
+if (!$session->isLoggedIn()) {
+    // No enviar ninguna salida antes de este bloque de código
+    echo "<script type='text/javascript'>
+            alert('No tienes permisos para entrar');
+            window.location.href = 'index.php';
+          </script>";
+    exit;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +40,7 @@ $session = $sessionService = SessionService::getInstance();
     $config = Config::getInstance();
     ?>
 
-    <form action="index.php" class="mb-3" method="get">
+    <form action="categorias.php" class="mb-3" method="get">
         <div class="input-group">
             <input type="text" class="form-control" id="search" name="search" placeholder="Nombre">
             <div class="input-group-append">
@@ -47,9 +54,6 @@ $session = $sessionService = SessionService::getInstance();
         <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Imagen</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -57,29 +61,21 @@ $session = $sessionService = SessionService::getInstance();
         <?php
         // Obtener el término de búsqueda si existe
         $searchTerm = $_GET['search'] ?? null;
-        $funkosService = new FunkoService($config->db);
-        $funkos = $funkosService->findAllWithCategoryName($searchTerm);
+        $categoriasService = new CategoriasService($config->db);
+        $categorias = $categoriasService->findAllWithName($searchTerm);
         ?>
-        <?php foreach ($funkos as $funko): ?>
+        <?php foreach ($categorias as $categoria): ?>
             <tr>
-                <td><?php echo htmlspecialchars($funko->id); ?></td>
-                <td><?php echo htmlspecialchars($funko->nombre); ?></td>
-                <td><?php echo htmlspecialchars($funko->precio); ?></td>
-                <td><?php echo htmlspecialchars($funko->cantidad); ?></td>
-                <td>
-                    <img alt="Imagen del funko" height="50"
-                         src="<?php echo htmlspecialchars($funko->imagen); ?>" width="50">
-                </td>
+                <td><?php echo htmlspecialchars(substr($categoria->id, 0, 8)); ?></td>
+                <td><?php echo htmlspecialchars($categoria->nombre); ?></td>
                 <td>
                     <a class="btn btn-primary btn-sm"
-                       href="details.php?id=<?php echo $funko->id; ?>">Detalles</a>
+                       href="detailscategoria.php?id=<?php echo $categoria->id; ?>">Detalles</a>
                     <a class="btn btn-secondary btn-sm"
-                       href="update.php?id=<?php echo $funko->id; ?>">Editar</a>
-                    <a class="btn btn-info btn-sm"
-                       href="update-image.php?id=<?php echo $funko->id; ?>">Imagen</a>
+                       href="updatecategoria.php?id=<?php echo $categoria->id; ?>">Editar</a>
                     <a class="btn btn-danger btn-sm"
-                       href="delete.php?id=<?php echo $funko->id; ?>"
-                       onclick="return confirm('¿Estás seguro de que deseas eliminar este funko?');">
+                       href="deletecategoria.php?id=<?php echo $categoria->id; ?>"
+                       onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoria?');">
                         Eliminar
                     </a>
                 </td>
@@ -87,8 +83,7 @@ $session = $sessionService = SessionService::getInstance();
         <?php endforeach; ?>
         </tbody>
     </table>
-
-    <a class="btn btn-success" href="create.php">Nuevo Funko</a>
+    <a class="btn btn-success" href="createcategoria.php">Nueva Categoria</a>
 
     <p class="mt-4 text-center" style="font-size: smaller;">
         <?php
@@ -112,3 +107,4 @@ $session = $sessionService = SessionService::getInstance();
         crossorigin="anonymous"></script>
 </body>
 </html>
+

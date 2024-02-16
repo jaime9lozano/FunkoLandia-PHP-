@@ -30,10 +30,17 @@ $username = $session->isLoggedIn() ? $session->getUserName() : 'Invitado';
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php">Productos</a>
+                    <a class="nav-link" href="index.php">Funkos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="create.php">Nuevo Producto</a>
+                    <a class="nav-link" href="create.php">Nuevo Funko</a>
+                </li>
+                <li>
+                    <?php
+                    if ($session->isLoggedIn()) {
+                        echo '<a class="nav-link" href="categorias.php">Categorias</a>';
+                    }
+                    ?>
                 </li>
                 <!-- Otras opciones de menú -->
             </ul>

@@ -41,7 +41,7 @@ class FunkoService
 
         $stmt->execute();
 
-        $productos = [];
+        $funkos = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $funko = new Funko(
                 $row['id'],
