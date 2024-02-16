@@ -40,14 +40,18 @@ if (!$session->isLoggedIn()) {
     $config = Config::getInstance();
     ?>
 
-    <form action="categorias.php" class="mb-3" method="get">
-        <div class="input-group">
-            <input type="text" class="form-control" id="search" name="search" placeholder="Nombre">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Buscar</button>
-            </div>
-        </div>
-    </form>
+    <?php
+    $searchOption = '';
+    if ($session->isAdmin()): ?>
+        <form action="categorias.php" method="get" class="mb-3">
+            <select name="searchOption">
+                <option value="normales" <?php echo ($searchOption === 'normales') ? 'selected' : ''; ?>>Activas</option>
+                <option value="eliminadas" <?php echo ($searchOption === 'eliminadas') ? 'selected' : ''; ?>>Eliminadas</option>
+            </select>
+            <input type="hidden" name="searchIsDeleted" value="true">
+            <button class="btn btn-dark" type="submit">Buscar</button>
+        </form>
+    <?php endif; ?>
 
     <table class="table">
         <thead>
@@ -55,14 +59,22 @@ if (!$session->isLoggedIn()) {
             <th>ID</th>
             <th>Nombre</th>
             <th>Acciones</th>
+
         </tr>
         </thead>
         <tbody>
+
         <?php
-        // Obtener el término de búsqueda si existe
+        $searchOption = isset($_GET['searchOption']) ? $_GET['searchOption'] : 'normales';
         $searchTerm = $_GET['search'] ?? null;
+        $searchIsDeleted = isset($_GET['searchIsDeleted']) && $_GET['searchIsDeleted'] === 'true';
         $categoriasService = new CategoriasService($config->db);
-        $categorias = $categoriasService->findAllWithName($searchTerm);
+        if ($searchOption === 'normales') {
+            // Realizar la búsqueda normal
+            $categorias = $categoriasService->findAllWithName($searchTerm);
+        } else{
+            $categorias = $categoriasService->findAllWithDeleted($searchTerm);
+        }
         ?>
         <?php foreach ($categorias as $categoria): ?>
             <tr>
@@ -71,20 +83,26 @@ if (!$session->isLoggedIn()) {
                 <td>
                     <a class="btn btn-primary btn-sm"
                        href="detailscategoria.php?id=<?php echo $categoria->id; ?>">Detalles</a>
-                    <a class="btn btn-secondary btn-sm"
-                       href="updatecategoria.php?id=<?php echo $categoria->id; ?>">Editar</a>
-                    <a class="btn btn-danger btn-sm"
-                       href="deletecategoria.php?id=<?php echo $categoria->id; ?>"
-                       onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoria?');">
-                        Eliminar
-                    </a>
+                <?php
+                if ($session->isAdmin()): ?>
+                        <a class="btn btn-secondary btn-sm"
+                           href="updatecategorias.php?id=<?php echo $categoria->id; ?>">Editar</a>
+                        <a class="btn btn-danger btn-sm"
+                           href="deletecategoria.php?id=<?php echo $categoria->id; ?>"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoria?');">
+                            Eliminar
+                        </a>
+                <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
-    <a class="btn btn-success" href="createcategoria.php">Nueva Categoria</a>
-
+    <?php
+    if ($session->isAdmin()): ?>
+        <a class="btn btn-success" href="createcategoria.php">Nueva Categoria</a>
+    <?php endif; ?>
+    <a class="btn btn-success" href="index.php">Volver a Funkos</a>
     <p class="mt-4 text-center" style="font-size: smaller;">
         <?php
         if ($session->isLoggedIn()) {

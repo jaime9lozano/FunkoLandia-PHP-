@@ -66,8 +66,8 @@ CREATE TABLE "public"."usuarios"
 ) WITH (oids = false);
 
 -- Contraseña: admin Admin1
--- Contraseña: user User1234
--- Contraseña: test test1234
+-- Contraseña: user User1
+-- Contraseña: test test1
 
 
 INSERT INTO "usuarios" ("is_deleted", "created_at", "id", "updated_at", "apellidos", "email", "nombre", "password",

@@ -106,7 +106,8 @@ class CategoriasService
     public function findAllWithName($searchTerm = null)
     {
         $sql = "SELECT c.*, null AS categoria_nombre
-        FROM categorias c";
+        FROM categorias c
+        WHERE c.is_deleted = false";
 
         if ($searchTerm) {
             $searchTerm = '%' . strtolower($searchTerm) . '%';
@@ -157,5 +158,40 @@ class CategoriasService
                 $row['is_deleted']
         );
         return $categoria;
+    }
+
+    public function findAllWithDeleted($searchTerm = null)
+    {
+        $sql = "SELECT c.*, null AS categoria_nombre
+        FROM categorias c
+        WHERE c.is_deleted = true";
+
+        if ($searchTerm) {
+            $searchTerm = '%' . strtolower($searchTerm) . '%';
+            $sql .= " WHERE LOWER(c.nombre) LIKE :searchTerm";
+        }
+
+        $sql .= " ORDER BY c.id ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        if ($searchTerm) {
+            $stmt->bindValue(':searchTerm', $searchTerm, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+
+        $categorias = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $categoria = new Categoria(
+                $row['id'],
+                $row['nombre'],
+                $row['created_at'],
+                $row['updated_at'],
+                $row['is_deleted']
+            );
+            $categorias[] = $categoria;
+        }
+        return $categorias;
     }
 }

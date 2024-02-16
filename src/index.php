@@ -49,6 +49,7 @@ $session = $sessionService = SessionService::getInstance();
             <th>Nombre</th>
             <th>Precio</th>
             <th>Cantidad</th>
+            <th>Categoria</th>
             <th>Imagen</th>
             <th>Acciones</th>
         </tr>
@@ -66,6 +67,7 @@ $session = $sessionService = SessionService::getInstance();
                 <td><?php echo htmlspecialchars($funko->nombre); ?></td>
                 <td><?php echo htmlspecialchars($funko->precio); ?></td>
                 <td><?php echo htmlspecialchars($funko->cantidad); ?></td>
+                <td><?php echo htmlspecialchars($funko->categoriaNombre); ?></td>
                 <td>
                     <img alt="Imagen del funko" height="50"
                          src="<?php echo htmlspecialchars($funko->imagen); ?>" width="50">
@@ -73,22 +75,28 @@ $session = $sessionService = SessionService::getInstance();
                 <td>
                     <a class="btn btn-primary btn-sm"
                        href="details.php?id=<?php echo $funko->id; ?>">Detalles</a>
-                    <a class="btn btn-secondary btn-sm"
-                       href="update.php?id=<?php echo $funko->id; ?>">Editar</a>
-                    <a class="btn btn-info btn-sm"
-                       href="update-image.php?id=<?php echo $funko->id; ?>">Imagen</a>
-                    <a class="btn btn-danger btn-sm"
-                       href="delete.php?id=<?php echo $funko->id; ?>"
-                       onclick="return confirm('¿Estás seguro de que deseas eliminar este funko?');">
-                        Eliminar
-                    </a>
+                <?php
+                if ($session->isAdmin()): ?>
+
+                        <a class="btn btn-secondary btn-sm"
+                           href="update.php?id=<?php echo $funko->id; ?>">Editar</a>
+                        <a class="btn btn-info btn-sm"
+                           href="update-image.php?id=<?php echo $funko->id; ?>">Imagen</a>
+                        <a class="btn btn-danger btn-sm"
+                           href="delete.php?id=<?php echo $funko->id; ?>"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar este funko?');">
+                            Eliminar
+                        </a>
+                <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
-
-    <a class="btn btn-success" href="create.php">Nuevo Funko</a>
+    <?php
+    if ($session->isAdmin()): ?>
+        <a class="btn btn-success" href="create.php">Nuevo Funko</a>
+    <?php endif; ?>
 
     <p class="mt-4 text-center" style="font-size: smaller;">
         <?php
