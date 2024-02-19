@@ -29,6 +29,13 @@ $username = $session->isLoggedIn() ? $session->getUserName() : 'Invitado';
                     ?>
                     </a>
                 </li>
+                    <?php
+                    if (!$session->isLoggedIn()) {
+                        echo '<li class="nav-item">
+                    <a class="nav-link" href="register.php">Register</a>
+                </li>';
+                    }
+                    ?>
                 <li class="nav-item">
                     <a class="nav-link" href="index.php">Funkos</a>
                 </li>

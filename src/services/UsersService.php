@@ -66,4 +66,51 @@ class UsersService
             $roles
         );
     }
+
+    public function createUser($username, $password, $nombre, $apellidos, $email, $roles = [])
+    {
+        if ($this->findUserByUsername($username)) {
+            throw new Exception('El nombre de usuario ya está en uso');
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $stmt = $this->db->prepare("INSERT INTO usuarios (username, password, nombre, apellidos, email, created_at, updated_at, is_deleted) 
+                                VALUES (:username, :password, :nombre, :apellidos, :email, NOW(), NOW(), false)");
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':apellidos', $apellidos);
+        $stmt->bindParam(':email', $email);
+
+        $stmt->execute();
+
+        $userId = $this->db->lastInsertId();
+
+        if (!empty($roles)) {
+            $this->assignRolesToUser($userId, $roles);
+        }
+
+        return new User(
+            $userId,
+            $username,
+            $hashedPassword,
+            $nombre,
+            $apellidos,
+            $email,
+            date('Y-m-d H:i:s'),
+            date('Y-m-d H:i:s'),
+            false,
+            $roles
+        );
+    }
+
+    private function assignRolesToUser($userId, $roles): void
+    {
+        $rolesString = implode(',', $roles);
+        $stmt = $this->db->prepare("INSERT INTO user_roles (user_id, roles) VALUES (:user_id, :roles)");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->bindParam(':roles', $rolesString);
+        $stmt->execute();
+    }
 }

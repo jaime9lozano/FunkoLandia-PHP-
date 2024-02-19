@@ -118,7 +118,7 @@ class SessionService
 
     public function getWelcomeMessage()
     {
-        return "Listado de Funkos";
+        return "Pagina de Funkos";
     }
 
     public function getUsername()
